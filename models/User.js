@@ -13,7 +13,7 @@ const UserSchema = new Schema(
             required: true,
             unique: true,
         },
-        thought: [
+        thoughts: [
             {
                 type: Schema.Types.ObjectId,
                 ref: 'Thought'
