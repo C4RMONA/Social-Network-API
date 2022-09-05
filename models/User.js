@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const Thought = require('./Thought')
 
 const UserSchema = new Schema(
     {
@@ -12,31 +13,39 @@ const UserSchema = new Schema(
             type: String,
             required: true,
             unique: true,
+            //needs a validator
         },
         thoughts: [
             {
                 type: Schema.Types.ObjectId,
+
                 ref: 'Thought'
             }
         ],
         friends: [
             {
-            type: Schema.Types.ObjectId,
-            ref: 'User'
+                type: Schema.Types.ObjectId,
+                ref: 'User'
             }
         ]
     },
     {
         toJSON: {
-            virtuals: true
-        }
+            virtuals: true,
+            getters: true
+        },
+        id: false
     }
 )
 
+UserSchema.pre('remove', async function () {
+    await Thought.remove({ _id: { $in: this.thoughts } })
+});
+
 //gets total count of friends
-UserSchema.virtual('friendCount').get(function() {
-    return this.friends.reduce((total, friends) => total + friends.user.length + 1, 0) 
-})
+UserSchema.virtual('friendCount').get(function () {
+    return this.friends.length;
+});
 
 const User = model('User', UserSchema);
 

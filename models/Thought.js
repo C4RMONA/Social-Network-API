@@ -3,7 +3,7 @@ const { Schema, model, Types } = require('mongoose');
 const ReactionSchema = new Schema(
     {
         reactionId: {
-            type:  Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             default: () => new Types.ObjectId()
         },
         reactionBody: {
@@ -18,8 +18,13 @@ const ReactionSchema = new Schema(
         createdAt: {
             type: Date,
             default: Date.now,
-            get: createdAtVal => dateFormat(createdAtVal)
         }
+    },
+    {
+        toJSON: {
+            getters: true
+        },
+        id: false
     }
 )
 
@@ -34,13 +39,20 @@ const ThoughtSchema = new Schema(
         createdAt: {
             type: Date,
             default: Date.now,
-            get: (createdAtVal) => dateFormat(createdAtVal)
+            //date format
         },
         username: {
             type: String,
             required: true
         },
         reactions: [ReactionSchema]
+    },
+    {
+        toJSON: {
+            virtuals: true,
+            getters: true
+        },
+        id: false
     }
 )
 
